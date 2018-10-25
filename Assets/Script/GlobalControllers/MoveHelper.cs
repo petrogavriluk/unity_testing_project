@@ -119,6 +119,24 @@ public class MoveHelper : MonoBehaviour
         return 0f;
     }
 
+    public void StartMoving(MonoBehaviour objectToMove)
+    {
+        IEnumerable<MonoBehaviour> group;
+        if (Controllers.MoveHelperInstance.MoveAsGroup && objectToMove is IAttachable)
+        {
+            group = ConnectionHelper.GetAllConnected((IAttachable)objectToMove).Select(a => a as MonoBehaviour);
+        }
+        else
+        {
+            group = new MonoBehaviour[] { objectToMove };
+            if (objectToMove is IAttachable)
+            {
+                (objectToMove as IAttachable).DetachAll();
+            }
+        }
+        StartMoving(group);
+    }
+
     public void StartMoving(IEnumerable<MonoBehaviour> objects)
     {
         isMoving = true;

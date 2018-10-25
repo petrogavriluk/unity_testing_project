@@ -172,7 +172,12 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         Controllers.CameraControllerInstance.CameraMoved += OnCameraMoved;
 
         animator = new TransformAnimator(this);
-        animator.CameraMoved += OnCameraMoved;
+        animator.ObjectMoved += OnCameraMoved;
+        animator.ObjectRotated += OnCameraMoved;
+        animator.ObjectRotated += UpdateConnectors;
+        animator.ObjectScaled += OnCameraMoved;
+        animator.ObjectScaled += UpdateConnectors;
+
         animator.BouncePerSec = bouncePerSec;
         animator.Amplitude = amplitude;
         animator.RescalePerSec = rescalePerSec;
@@ -208,7 +213,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         if (Controllers.MoveHelperInstance.IsMoving)
             return;
 
-        Controllers.MoveHelperInstance.StartMoving(new CubeControl[] { this });
+        Controllers.MoveHelperInstance.StartMoving( this);
     }
 
     private void OnMouseDown()
@@ -252,6 +257,14 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
             MaterialColor = defaultColor;
         }
     }
+
+    void UpdateConnectors(object sender = null, EventArgs e = null)
+    {
+        foreach (var connector in Connectors)
+        {
+            connector.Value.Body.transform.position = objectRenderer.GetEdgePoint(connector.Key);
+        }
+    }
     private void OnCameraMoved(object sender = null, System.EventArgs e = null)
     {
         Vector3 textPosition = this.transform.position;
@@ -293,6 +306,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         }
         boxCollider.size = ObjectRenderer.bounds.size / transform.localScale.x;
         OnCameraMoved();
+        UpdateConnectors();
     }
 
     void SetRotation(object sender, bool enable)
@@ -320,12 +334,17 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     private void OnDestroy()
     {
         Destroy(stateText);
+        DetachAll();
         Controllers.ShapeControllerInstance.ChangeShape -= SetMesh;
         Controllers.AnimationControllerInstance.SetMoveAnimation -= SetMove;
         Controllers.AnimationControllerInstance.SetRotationAnimation -= SetRotation;
         Controllers.AnimationControllerInstance.SetScaleAnimation -= SetScale;
         Controllers.CameraControllerInstance.CameraMoved -= OnCameraMoved;
-        animator.CameraMoved -= OnCameraMoved;
+        animator.ObjectMoved -= OnCameraMoved;
+        animator.ObjectRotated -= OnCameraMoved;
+        animator.ObjectRotated -= UpdateConnectors;
+        animator.ObjectScaled -= OnCameraMoved;
+        animator.ObjectScaled -= UpdateConnectors;
     }
 
     public void CopyFrom(object anotherObject)

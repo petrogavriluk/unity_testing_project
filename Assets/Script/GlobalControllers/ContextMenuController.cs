@@ -76,20 +76,7 @@ public class ContextMenuController : MonoBehaviour
 
     private void MoveObject()
     {
-        IEnumerable<MonoBehaviour> group;
-        if(Controllers.MoveHelperInstance.MoveAsGroup && currentObject is IAttachable)
-        {
-            group = ConnectionHelper.GetAllConnected((IAttachable)currentObject).Select(a=>a as MonoBehaviour);
-        }
-        else
-        {
-            group = new MonoBehaviour[] { currentObject };
-            if(currentObject is IAttachable)
-            {
-
-            }
-        }
-        Controllers.MoveHelperInstance.StartMoving(group);
+        Controllers.MoveHelperInstance.StartMoving(currentObject);
         ShowMenu(false);
     }
 

@@ -71,6 +71,9 @@ public class ConnectionPointController : MonoBehaviour, IConnector
     }
     public void Disconnect()
     {
+        if (ConnectedObject == null)
+            return;
+
         ConnectedObject.ConnectedObject = null;
         ConnectedObject = null;
     }
@@ -84,6 +87,7 @@ public class ConnectionPointController : MonoBehaviour, IConnector
 
     private void OnDestroy()
     {
+        Disconnect();
         Controllers.MoveHelperInstance.UnregisterConnector(this);
     }
 

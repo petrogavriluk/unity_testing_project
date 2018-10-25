@@ -7,7 +7,9 @@ using UnityEngine;
 
 class TransformAnimator : ITransformAnimator
 {
-    public event EventHandler CameraMoved;
+    public event EventHandler ObjectMoved;
+    public event EventHandler ObjectRotated;
+    public event EventHandler ObjectScaled;
 
     readonly MonoBehaviour animatedObject;
     Coroutine moveCoroutine = null;
@@ -92,10 +94,7 @@ class TransformAnimator : ITransformAnimator
             {
                 animatedObject.transform.Rotate(-5f, 0f, -5f);
             }
-            if (CameraMoved != null)
-            {
-                CameraMoved.Invoke(this, EventArgs.Empty);
-            }
+            ObjectRotated?.Invoke(this, EventArgs.Empty);
             ++rotationCounter;
             yield return null;
         }
@@ -110,10 +109,7 @@ class TransformAnimator : ITransformAnimator
             animatedObject.transform.localScale = Vector3.Lerp(maxScale, minScale, ScaleCurve.Evaluate(scaleAnimationTime));
             scaleAnimationTime += Time.deltaTime * RescalePerSec * 2;
 
-            if (CameraMoved != null)
-            {
-                CameraMoved.Invoke(this, EventArgs.Empty);
-            }
+            ObjectScaled?.Invoke(this, EventArgs.Empty);
             yield return null;
         }
     }
@@ -124,10 +120,7 @@ class TransformAnimator : ITransformAnimator
             float shift = GetShiftCoefficient(moveAnimationTime + Time.deltaTime) - GetShiftCoefficient(moveAnimationTime);
             animatedObject.transform.position += new Vector3(0f, shift * Amplitude, 0f);
             moveAnimationTime += Time.deltaTime;
-            if (CameraMoved != null)
-            {
-                CameraMoved.Invoke(this, EventArgs.Empty);
-            }
+            ObjectMoved?.Invoke(this, EventArgs.Empty);
             yield return null;
         }
     }
