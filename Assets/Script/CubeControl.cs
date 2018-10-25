@@ -315,6 +315,8 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
             return;
 
         animator.SetRotateAnimationState(enable);
+        if (enable)
+            DetachAll();
     }
     void SetMove(object sender, bool enable)
     {
@@ -322,6 +324,8 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
             return;
 
         animator.SetMoveAnimationState(enable);
+        if (enable)
+            DetachAll();
     }
     void SetScale(object sender, bool enable)
     {
@@ -329,6 +333,8 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
             return;
 
         animator.SetScaleAnimationState(enable);
+        if (enable)
+            DetachAll();
     }
 
     private void OnDestroy()
