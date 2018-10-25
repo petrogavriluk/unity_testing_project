@@ -33,8 +33,10 @@ public class ContextMenuController : MonoBehaviour
         eventSystem = GetComponent<EventSystem>();
         canvasGroup = GetComponent<CanvasGroup>();
 
+        Controllers.CameraControllerInstance.CameraMoved += SetRotationToCamera;
         ShowMenu(false);
     }
+
 
     // Use this for initialization
     void Start()
@@ -60,6 +62,12 @@ public class ContextMenuController : MonoBehaviour
                 ShowMenu(false);
             }
         }
+    }
+
+    private void SetRotationToCamera(object sender = null, EventArgs e = null)
+    {
+        if (currentObject != null)
+            gameObject.transform.rotation = Camera.main.transform.rotation;
     }
 
     private void OnDrawGizmos_()
@@ -100,7 +108,7 @@ public class ContextMenuController : MonoBehaviour
         ShowMenu(false);
     }
 
-    public void ShowContextMenu<TObject>(TObject clickedObject, Vector3 clickPosition, ITransformAnimator animator = null)  where TObject : MonoBehaviour, IObjectWithRenderer
+    public void ShowContextMenu<TObject>(TObject clickedObject, Vector3 clickPosition, ITransformAnimator animator = null) where TObject : MonoBehaviour, IObjectWithRenderer
     {
         if (clickedObject == null)
             throw new ArgumentNullException("clickedObject");
@@ -110,7 +118,7 @@ public class ContextMenuController : MonoBehaviour
         var menuPosition = clickedObject.gameObject.transform.position;
         menuPosition.y = clickedObject.ObjectRenderer.bounds.max.y;
         gameObject.transform.position = menuPosition;
-        gameObject.transform.rotation = Camera.main.transform.rotation;
+        SetRotationToCamera();
 
         if (animator != null)
         {
