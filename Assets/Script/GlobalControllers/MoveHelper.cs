@@ -10,11 +10,12 @@ using UnityEngine.Assertions;
 public class MoveHelper : MonoBehaviour
 {
     static readonly float epsilon = 0.01f;
+
     private bool isMoving = false;
     private bool skipClick = false;
     IEnumerable<MonoBehaviour> movedObjects = Enumerable.Empty<MonoBehaviour>();
     Bounds groupBounds;
-    bool connectionHit = false;
+    private bool connectionHit = false;
     private readonly Dictionary<int, IConnector> objectIdToConnectorMap = new Dictionary<int, IConnector>();
     private readonly Dictionary<Side, IConnector> sideToConnector = new Dictionary<Side, IConnector>();
     private IConnector currentConnector = null;
@@ -44,10 +45,7 @@ public class MoveHelper : MonoBehaviour
         }
     }
 
-    public bool MoveAsGroup
-    {
-        get { return Controllers.ShapeControllerInstance.MoveAsGroup.isOn; }
-    }
+    public bool MoveAsGroup => Controllers.ShapeControllerInstance.MoveAsGroup.isOn;
 
     private void Update()
     {
@@ -56,7 +54,7 @@ public class MoveHelper : MonoBehaviour
         
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        connectionHit = Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask(LayerNames.connectionPoint));
+        connectionHit = Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask(LayerNames.ConnectionPoint));
         if (connectionHit)
         {
             MoveToConnector(hit);
@@ -64,7 +62,7 @@ public class MoveHelper : MonoBehaviour
         if (!connectionHit)
         {
             CurrentConnector = null;
-            if (Physics.Raycast(ray, out hit, 1000f))
+            if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask(LayerNames.Environment,LayerNames.CubeObjects)))
             {
                 MoveObjects(hit);
             }
@@ -153,7 +151,7 @@ public class MoveHelper : MonoBehaviour
 
         foreach (var obj in objects)
         {
-            obj.gameObject.layer = LayerMask.NameToLayer(LayerNames.ignoreRaycast);
+            obj.gameObject.layer = LayerMask.NameToLayer(LayerNames.MovedObjects);
             var movable = obj as IMovable;
             if (movable != null)
             {
@@ -223,7 +221,7 @@ public class MoveHelper : MonoBehaviour
         sideToConnector.Clear();
         foreach (var obj in movedObjects)
         {
-            obj.gameObject.layer = LayerMask.NameToLayer(LayerNames.defaultLayer);
+            obj.gameObject.layer = LayerMask.NameToLayer(LayerNames.CubeObjects);
             var movable = obj.GetComponent(typeof(IMovable)) as IMovable;
             if (movable != null)
             {

@@ -97,7 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultColor: {r: 0.38883376, g: 0.8602941, b: 0.22139922, a: 1}
   selectedColor: {r: 1, g: 0.78620684, b: 0, a: 1}
-  connectedColor: {r: 0.36786333, g: 0.5681914, b: 0.9264706, a: 0}
+  connectedColor: {r: 0.0708802, g: 0.22740833, b: 0.50735295, a: 1}
 --- !u!135 &135913501447078256
 SphereCollider:
   m_ObjectHideFlags: 1

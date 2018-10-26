@@ -28,6 +28,8 @@ public class ConnectionPointController : MonoBehaviour, IConnector
         {
             connectedObject = value;
             UpdateColorAndVisibility();
+            gameObject.layer = LayerMask.NameToLayer(
+                (ConnectedObject != null) ? LayerNames.ConnectedPoint : LayerNames.ConnectionPoint);
         }
     }
 
