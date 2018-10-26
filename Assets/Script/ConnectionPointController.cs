@@ -12,12 +12,24 @@ public class ConnectionPointController : MonoBehaviour, IConnector
     private Color defaultColor;
     [SerializeField]
     private Color selectedColor;
+    [SerializeField]
+    private Color connectedColor;
     private Side side;
     bool hovered = false;
     Renderer objectRenderer;
+    bool isVisible = true;
+    private IConnector connectedObject;
 
     public IAttachable Owner { get; set; }
-    public IConnector ConnectedObject { get; set; }
+    public IConnector ConnectedObject
+    {
+        get { return connectedObject; }
+        set
+        {
+            connectedObject = value;
+            UpdateColorAndVisibility();
+        }
+    }
 
     public GameObject Body
     {
@@ -43,10 +55,11 @@ public class ConnectionPointController : MonoBehaviour, IConnector
 
         set
         {
-            if(hovered!=value)
+            if (hovered != value)
             {
                 hovered = value;
-                if(hovered)
+                UpdateColorAndVisibility();
+                if (hovered)
                 {
                     MaterialColor = selectedColor;
                 }
@@ -55,6 +68,28 @@ public class ConnectionPointController : MonoBehaviour, IConnector
                     MaterialColor = defaultColor;
                 }
             }
+        }
+    }
+
+    public Renderer ObjectRenderer
+    {
+        get
+        {
+            return objectRenderer;
+        }
+    }
+
+    public bool Visible
+    {
+        get
+        {
+            return isVisible || ConnectedObject != null;
+        }
+
+        set
+        {
+            isVisible = value;
+            UpdateColorAndVisibility();
         }
     }
 
@@ -76,6 +111,22 @@ public class ConnectionPointController : MonoBehaviour, IConnector
 
         ConnectedObject.ConnectedObject = null;
         ConnectedObject = null;
+    }
+
+    private void UpdateColorAndVisibility()
+    {
+        if (ConnectedObject != null)
+        {
+            MaterialColor = connectedColor;
+        }
+        else
+        {
+            MaterialColor = Hovered ? selectedColor : defaultColor;
+        }
+        if (gameObject.activeSelf != Visible)
+        {
+            gameObject.SetActive(Visible);
+        }
     }
 
     public Side GetSide() => side;

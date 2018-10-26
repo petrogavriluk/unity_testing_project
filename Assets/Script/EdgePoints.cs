@@ -42,22 +42,22 @@ namespace Helpers
             return 0;
         }
 
-        public static Vector3 GetEdgePoint(this Renderer renderer, Side side)
+        public static Vector3 GetEdgePoint(this Renderer renderer, Side side, float shiftOut = 0f)
         {
             switch (side)
             {
                 case Side.YMin:
-                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Min, EdgePosition.Mid);
+                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Min, EdgePosition.Mid) + new Vector3(0f, -shiftOut, 0f);
                 case Side.YMax:
-                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Max, EdgePosition.Mid);
+                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Max, EdgePosition.Mid) + new Vector3(0f, shiftOut, 0f);
                 case Side.XMin:
-                    return renderer.GetEdgePoint(EdgePosition.Min, EdgePosition.Mid, EdgePosition.Mid);
+                    return renderer.GetEdgePoint(EdgePosition.Min, EdgePosition.Mid, EdgePosition.Mid) + new Vector3(-shiftOut, 0f,0f);
                 case Side.XMax:
-                    return renderer.GetEdgePoint(EdgePosition.Max, EdgePosition.Mid, EdgePosition.Mid);
+                    return renderer.GetEdgePoint(EdgePosition.Max, EdgePosition.Mid, EdgePosition.Mid) + new Vector3(shiftOut, 0f,0f);
                 case Side.ZMin:
-                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Min);
+                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Min) + new Vector3(0f,0f, -shiftOut);
                 case Side.ZMax:
-                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Max);
+                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Max) + new Vector3(0f,0f, shiftOut);
             }
             return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Mid);
         }

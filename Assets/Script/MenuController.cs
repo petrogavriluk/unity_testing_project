@@ -11,7 +11,6 @@ public class MenuController : MonoBehaviour
         UpdateMenuState();
     }
 
-    // Update is called once per frame
     void UpdateMenuState()
     {
         gameObject.SetActive(isShown);

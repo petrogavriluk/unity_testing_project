@@ -61,7 +61,7 @@ public class MoveHelper : MonoBehaviour
         {
             MoveToConnector(hit);
         }
-        else
+        if (!connectionHit)
         {
             CurrentConnector = null;
             if (Physics.Raycast(ray, out hit, 1000f))
@@ -81,6 +81,12 @@ public class MoveHelper : MonoBehaviour
     {
         IConnector hoveredConnector = objectIdToConnectorMap[hit.collider.gameObject.GetInstanceID()];
         IConnector groupConnector = sideToConnector[hoveredConnector.GetSide().GetOppositeSide()];
+
+        if (hoveredConnector.ConnectedObject != null)
+        {
+            connectionHit = false;
+            return;
+        }
 
         Vector3 shift = hoveredConnector.Body.transform.position - groupConnector.Body.transform.position;
         groupBounds.center += shift;

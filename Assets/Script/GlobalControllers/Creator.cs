@@ -22,7 +22,7 @@ public class Creator : MonoBehaviour
             throw new MissingComponentException("Missing script");
 
         monoBehaviour.Owner = owner;
-        monoBehaviour.Body.SetActive(show);
+        monoBehaviour.Visible = show;
         monoBehaviour.SetSide(side);
         return monoBehaviour;
     }

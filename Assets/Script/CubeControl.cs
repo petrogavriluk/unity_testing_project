@@ -100,7 +100,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
                 showConnectors = value;
                 foreach (var connector in Connectors.Values)
                 {
-                    connector.Body.SetActive(showConnectors);
+                    connector.Visible = showConnectors;
                 }
             }
         }
@@ -198,7 +198,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     private void CreateConnector(Side side)
     {
         IConnector connector = Controllers.CreatorInstance.CreateConnectionPoint(this, side, ShowConnectors);
-        connector.Body.transform.position = objectRenderer.GetEdgePoint(side);
+        connector.Body.transform.position = objectRenderer.GetEdgePoint(side, connector.ObjectRenderer.bounds.extents.x);
         connector.Body.transform.parent = gameObject.transform;
         sideConnectors[side] = connector;
     }
@@ -262,7 +262,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     {
         foreach (var connector in Connectors)
         {
-            connector.Value.Body.transform.position = objectRenderer.GetEdgePoint(connector.Key);
+            connector.Value.Body.transform.position = objectRenderer.GetEdgePoint(connector.Key,connector.Value.ObjectRenderer.bounds.extents.x);
         }
     }
     private void OnCameraMoved(object sender = null, System.EventArgs e = null)
@@ -281,6 +281,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     }
     public void SetMeshDirectly(PrimitiveType type)
     {
+        Bounds oldBounds = ObjectRenderer.bounds;
         switch (type)
         {
             case PrimitiveType.Sphere:
@@ -303,6 +304,10 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
                 transform.position += CubePosition - startPosition;
                 startPosition = CubePosition;
                 break;
+        }
+        if(oldBounds!=ObjectRenderer.bounds)
+        {
+            DetachAll();
         }
         boxCollider.size = ObjectRenderer.bounds.size / transform.localScale.x;
         OnCameraMoved();
