@@ -7,6 +7,10 @@ using UnityEngine.UI;
 using Helpers;
 using Interfaces;
 
+[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(LineRenderer))]
 public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRenderer, IAttachable
 {
     private static readonly float doubleClickDelay = 0.4f;
@@ -42,6 +46,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     Renderer objectRenderer;
     BoxCollider boxCollider;
     MeshFilter meshFilter;
+    LineRenderer lineRenderer;
     private bool isMoving = false;
     private float lastClick = 0f;
     private bool showConnectors = false;
@@ -68,6 +73,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         set
         {
             isMoving = value;
+            ShowLineRender(isMoving);
             if (isMoving)
             {
                 animator.SetMoveAnimationState(false);
@@ -117,6 +123,8 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         stateText.transform.parent = gameObject.transform;
         boxCollider = GetComponent<BoxCollider>();
         meshFilter = GetComponent<MeshFilter>();
+        lineRenderer = GetComponent<LineRenderer>();
+        ShowLineRender(false);
 
         transform.position = startPosition = CubePosition;
         SetMeshDirectly(PrimitiveType.Cube);
@@ -263,6 +271,21 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         foreach (var connector in Connectors)
         {
             connector.Value.Body.transform.position = objectRenderer.GetEdgePoint(connector.Key,connector.Value.ObjectRenderer.bounds.extents.x);
+        }
+    }
+
+    void ShowLineRender(bool show)
+    {
+        lineRenderer.enabled = show;
+
+        if (show)
+        {
+            Bounds localBounds = ObjectRenderer.bounds;
+            localBounds.center = Vector3.zero;
+            localBounds.size /= transform.localScale.x;
+            var points = localBounds.GetBoxFrameLines(0.1f);
+            lineRenderer.positionCount = points.Length;
+            lineRenderer.SetPositions(points);
         }
     }
     private void OnCameraMoved(object sender = null, System.EventArgs e = null)

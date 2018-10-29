@@ -47,71 +47,76 @@ namespace Helpers
             switch (side)
             {
                 case Side.YMin:
-                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Min, EdgePosition.Mid) + new Vector3(0f, -shiftOut, 0f);
+                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Min, EdgePosition.Mid, shiftOut);
                 case Side.YMax:
-                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Max, EdgePosition.Mid) + new Vector3(0f, shiftOut, 0f);
+                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Max, EdgePosition.Mid, shiftOut);
                 case Side.XMin:
-                    return renderer.GetEdgePoint(EdgePosition.Min, EdgePosition.Mid, EdgePosition.Mid) + new Vector3(-shiftOut, 0f,0f);
+                    return renderer.GetEdgePoint(EdgePosition.Min, EdgePosition.Mid, EdgePosition.Mid, shiftOut);
                 case Side.XMax:
-                    return renderer.GetEdgePoint(EdgePosition.Max, EdgePosition.Mid, EdgePosition.Mid) + new Vector3(shiftOut, 0f,0f);
+                    return renderer.GetEdgePoint(EdgePosition.Max, EdgePosition.Mid, EdgePosition.Mid, shiftOut);
                 case Side.ZMin:
-                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Min) + new Vector3(0f,0f, -shiftOut);
+                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Min, shiftOut);
                 case Side.ZMax:
-                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Max) + new Vector3(0f,0f, shiftOut);
+                    return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Max, shiftOut);
             }
             return renderer.GetEdgePoint(EdgePosition.Mid, EdgePosition.Mid, EdgePosition.Mid);
         }
 
-        public static Vector3 GetEdgePoint(this Renderer renderer, EdgePosition xPos, EdgePosition yPos, EdgePosition zPos)
+        public static Vector3 GetEdgePoint(this Renderer renderer, EdgePosition xPos, EdgePosition yPos, EdgePosition zPos, float shiftOut = 0f)
+        {
+            if (!renderer)
+                return new Vector3();
+
+            return renderer.bounds.GetEdgePoint(xPos, yPos, zPos, shiftOut);
+        }
+        public static Vector3 GetEdgePoint(this Bounds bounds, EdgePosition xPos, EdgePosition yPos, EdgePosition zPos, float shiftOut = 0.0f)
         {
             Vector3 res = new Vector3();
-            if (!renderer)
-                return res;
 
-            Vector3 min = renderer.bounds.min;
-            Vector3 max = renderer.bounds.max;
-            Vector3 mid = renderer.bounds.center;
+            Vector3 min = bounds.min;
+            Vector3 max = bounds.max;
+            Vector3 mid = bounds.center;
 
             switch (xPos)
             {
                 case EdgePosition.Min:
-                    res.x = min.x;
+                    res.x = min.x - shiftOut;
                     break;
                 case EdgePosition.Mid:
                     res.x = mid.x;
                     break;
                 case EdgePosition.Max:
-                    res.x = max.x;
+                    res.x = max.x + shiftOut;
                     break;
             }
             switch (yPos)
             {
                 case EdgePosition.Min:
-                    res.y = min.y;
+                    res.y = min.y - shiftOut;
                     break;
                 case EdgePosition.Mid:
                     res.y = mid.y;
                     break;
                 case EdgePosition.Max:
-                    res.y = max.y;
+                    res.y = max.y + shiftOut;
                     break;
             }
             switch (zPos)
             {
                 case EdgePosition.Min:
-                    res.z = min.z;
+                    res.z = min.z - shiftOut;
                     break;
                 case EdgePosition.Mid:
                     res.z = mid.z;
                     break;
                 case EdgePosition.Max:
-                    res.z = max.z;
+                    res.z = max.z + shiftOut;
                     break;
             }
             return res;
         }
 
-        public static Vector3 _GetFaceMidPoint(this Renderer renderer, Axis axis,EdgePosition position)
+        public static Vector3 _GetFaceMidPoint(this Renderer renderer, Axis axis, EdgePosition position)
         {
             switch (axis)
             {
@@ -134,6 +139,30 @@ namespace Helpers
         {
             Renderer renderer = gameObject.GetComponent<Renderer>();
             return renderer ? renderer.bounds : new Bounds();
+        }
+
+        public static Vector3[] GetBoxFrameLines(this Bounds bounds, float shiftOut = 0f)
+        {
+            Vector3[] points = new Vector3[]
+            {
+                bounds.GetEdgePoint(EdgePosition.Min, EdgePosition.Min, EdgePosition.Min, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Min, EdgePosition.Max, EdgePosition.Min, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Min, EdgePosition.Max, EdgePosition.Max, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Min, EdgePosition.Min, EdgePosition.Max, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Min, EdgePosition.Min, EdgePosition.Min, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Max, EdgePosition.Min, EdgePosition.Min, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Max, EdgePosition.Max, EdgePosition.Min, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Min, EdgePosition.Max, EdgePosition.Min, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Max, EdgePosition.Max, EdgePosition.Min, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Max, EdgePosition.Max, EdgePosition.Max, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Min, EdgePosition.Max, EdgePosition.Max, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Max, EdgePosition.Max, EdgePosition.Max, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Max, EdgePosition.Min, EdgePosition.Max, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Min, EdgePosition.Min, EdgePosition.Max, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Max, EdgePosition.Min, EdgePosition.Max, shiftOut),
+                bounds.GetEdgePoint(EdgePosition.Max, EdgePosition.Min, EdgePosition.Min, shiftOut),
+            };
+            return points;
         }
     }
 }

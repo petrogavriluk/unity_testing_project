@@ -8,6 +8,8 @@ using UnityEngine.UI;
 using Helpers;
 using Interfaces;
 
+[RequireComponent(typeof(GraphicRaycaster))]
+[RequireComponent(typeof(CanvasGroup))]
 public class ContextMenuController : MonoBehaviour
 {
     MonoBehaviour currentObject;

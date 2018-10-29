@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Interfaces;
 using Helpers;
 
-
+[RequireComponent(typeof(Renderer))]
 public class ConnectionPointController : MonoBehaviour, IConnector
 {
     [SerializeField]
