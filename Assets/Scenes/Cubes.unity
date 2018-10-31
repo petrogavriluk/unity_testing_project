@@ -2810,6 +2810,7 @@ GameObject:
   - component: {fileID: 1241015686}
   - component: {fileID: 1241015685}
   - component: {fileID: 1241015684}
+  - component: {fileID: 1241015688}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2880,6 +2881,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+--- !u!114 &1241015688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1241015683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e94e72d93b533043b73d19652b1839f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1292014648
 GameObject:
   m_ObjectHideFlags: 0
@@ -3074,7 +3086,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1387872334}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 5.69, y: 21.48, z: -6.23}
+  m_LocalPosition: {x: 2.7, y: 15.7, z: -6.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3533,7 +3545,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1604907215}
-  - component: {fileID: 1604907214}
   m_Layer: 0
   m_Name: CubeCollection
   m_TagString: Untagged
@@ -3541,17 +3552,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1604907214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1604907213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e94e72d93b533043b73d19652b1839f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1604907215
 Transform:
   m_ObjectHideFlags: 0
@@ -4167,7 +4167,7 @@ MonoBehaviour:
   cubeParent: {fileID: 1604907215}
   textPrefab: {fileID: 102798026281084814, guid: f9c413ec535193c4db399e8e886ef52d,
     type: 2}
-  poolInitSize: 0
+  poolInitSize: 10
 --- !u!114 &1793978103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5036,7 +5036,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2057950674}
   m_LocalRotation: {x: 0.8754261, y: 0.10938163, z: 0.23456968, w: -0.40821788}
-  m_LocalPosition: {x: 5.69, y: 21.48, z: -6.23}
+  m_LocalPosition: {x: 2.7, y: 15.7, z: -6.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

@@ -6,6 +6,9 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public event EventHandler CameraMoved;
+
+    private readonly float rotationSpeed = 2f;
+    private readonly float movementSpeed = 0.1f;
     // Use this for initialization
     void Start()
     {
@@ -13,8 +16,21 @@ public class CameraController : MonoBehaviour
         Camera.main.transform.hasChanged = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
+    {
+        float horRotation = Input.GetAxis("RotateHorizontal");
+        float verRotation = -Input.GetAxis("RotateVertical");
+
+        transform.eulerAngles += new Vector3(verRotation * rotationSpeed, horRotation * rotationSpeed, 0f);
+
+        float horMove = Input.GetAxis("Horizontal");
+        float forwMove = Input.GetAxis("Vertical");
+
+        transform.Translate(Camera.main.transform.forward.normalized * forwMove * movementSpeed, Space.World);
+        var right = Vector3.Cross(Camera.main.transform.up, Camera.main.transform.forward).normalized;
+        transform.Translate(right * horMove * movementSpeed, Space.World);
+    }
+    void LateUpdate()
     {
         if (Camera.main.transform.hasChanged)
         {
