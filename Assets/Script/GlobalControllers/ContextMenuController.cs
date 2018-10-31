@@ -53,8 +53,10 @@ public class ContextMenuController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            PointerEventData eventData = new PointerEventData(eventSystem);
-            eventData.position = Input.mousePosition;
+            PointerEventData eventData = new PointerEventData(eventSystem)
+            {
+                position = Input.mousePosition
+            };
             List<RaycastResult> results = new List<RaycastResult>();
 
             graphicRaycaster.Raycast(eventData, results);
@@ -74,8 +76,8 @@ public class ContextMenuController : MonoBehaviour
 
     private void OnDrawGizmos_()
     {
-        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //Debug.DrawRay(ray.origin, ray.direction * 20, Color.red, 10, true);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(ray.origin, ray.direction * 20, Color.red, 10, true);
     }
 
     private void ChangeScale(float scale)
@@ -92,12 +94,17 @@ public class ContextMenuController : MonoBehaviour
 
     private void DuplicateObject()
     {
-        var duplicate = Instantiate<GameObject>(currentObject.gameObject);
-        var duplicateMonoBehaviour = duplicate.GetComponent<MonoBehaviour>();
-        var copyableDuplicate = duplicateMonoBehaviour as ICopyable;
-        var copyableOrigin = currentObject as ICopyable;
-        if (copyableDuplicate != null && copyableOrigin != null)
-            copyableDuplicate.CopyFrom(copyableOrigin);
+        MonoBehaviour duplicateMonoBehaviour;
+        ICopyable copyable = currentObject as ICopyable;
+        if (copyable != null)
+        {
+            duplicateMonoBehaviour = copyable.CreateCopy();
+        }
+        else
+        {
+            var duplicate = Instantiate<GameObject>(currentObject.gameObject);
+            duplicateMonoBehaviour = duplicate.GetComponent<MonoBehaviour>();
+        }
 
         currentObject = duplicateMonoBehaviour;
         MoveObject();
@@ -105,7 +112,16 @@ public class ContextMenuController : MonoBehaviour
 
     void DeleteObject()
     {
-        Destroy(currentObject);
+        var cube = currentObject as CubeControl;
+        if (cube != null)
+        {
+            Controllers.CreatorInstance.DestroyCubeObject(cube);
+        }
+        else
+        {
+            Destroy(currentObject);
+        }
+
         currentObject = null;
         ShowMenu(false);
     }

@@ -1,7 +1,9 @@
-﻿namespace Interfaces
+﻿using UnityEngine;
+
+namespace Interfaces
 {
-    internal interface ICopyable
+    public interface ICopyable
     {
-        void CopyFrom(object anotherObject);
+        MonoBehaviour CreateCopy();
     }
 }

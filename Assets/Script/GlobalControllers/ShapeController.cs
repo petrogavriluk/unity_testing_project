@@ -45,7 +45,7 @@ public class ShapeController : MonoBehaviour
 
     private void InvokeCreateShape(PrimitiveType type)
     {
-        MonoBehaviour cube = Controllers.CreatorInstance.CreateMesh(type);
+        MonoBehaviour cube = Controllers.CreatorInstance.GetCubeObject(type);
         Controllers.MoveHelperInstance.StartMoving(new MonoBehaviour[] { cube });
 
     }

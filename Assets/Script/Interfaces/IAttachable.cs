@@ -6,7 +6,7 @@ using Helpers;
 
 namespace Interfaces
 {
-    public interface IAttachable
+    public interface IAttachable : IUnique
     {
         bool ShowConnectors { get; set; }
 

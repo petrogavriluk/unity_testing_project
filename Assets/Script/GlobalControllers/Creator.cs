@@ -13,7 +13,28 @@ public class Creator : MonoBehaviour
     [SerializeField]
     GameObject cubePrefab;
     [SerializeField]
+    Transform cubeParent;
+    [SerializeField]
     TextMesh textPrefab;
+    [SerializeField]
+    uint poolInitSize;
+
+    private readonly Queue<CubeControl> cubePool = new Queue<CubeControl>();
+
+    private void Awake()
+    {
+        
+    }
+
+    void InitPool()
+    {
+        for (int i = 0; i < poolInitSize; i++)
+        {
+            var cube = InstantiateCube();
+            DestroyCubeObject(cube);
+        }
+    }
+
     public IConnector CreateConnectionPoint(IAttachable owner, Side side, bool show)
     {
         var instance = Instantiate(connectionPointPrefab);
@@ -27,16 +48,41 @@ public class Creator : MonoBehaviour
         return monoBehaviour;
     }
 
-    public CubeControl CreateMesh(PrimitiveType meshType = PrimitiveType.Cube)
+    public CubeControl GetCubeObject(PrimitiveType meshType = PrimitiveType.Cube)
+    {
+        CubeControl cube;
+        if (cubePool.Count > 0)
+        {
+            cube = cubePool.Dequeue();
+            cube.gameObject.SetActive(true);
+        }
+        else
+        {
+            cube = InstantiateCube();
+        }
+
+        cube.SetMeshDirectly(meshType);
+        return cube;
+    }
+
+    public CubeControl InstantiateCube()
     {
         var instance = Instantiate(cubePrefab);
-        var monoBehaviour = instance.GetComponent<CubeControl>();
-        if (monoBehaviour == null)
+        var cube = instance.GetComponent<CubeControl>();
+        if (cube == null)
             throw new MissingComponentException("Missing script");
+        cube.transform.parent = cubeParent;
+        return cube;
+    }
 
-        monoBehaviour.SetMeshDirectly(meshType);
+    public void DestroyCubeObject(CubeControl cube)
+    {
+        if (cubePool.Contains(cube))
+            return;
 
-        return monoBehaviour;
+        cube.ResetDefault(cubePrefab.transform);
+        cube.gameObject.SetActive(false);
+        cubePool.Enqueue(cube);
     }
 
     public TextMesh CreateTextMesh(string initialText="")

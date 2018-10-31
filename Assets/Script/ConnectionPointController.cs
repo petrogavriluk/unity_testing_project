@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using Helpers;
 using Interfaces;
-using Helpers;
+using Serialization;
+using System;
+using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
 public class ConnectionPointController : MonoBehaviour, IConnector
@@ -144,4 +143,13 @@ public class ConnectionPointController : MonoBehaviour, IConnector
         Controllers.MoveHelperInstance.UnregisterConnector(this);
     }
 
+    public ConnectorSaveData SaveState()
+    {
+        return new ConnectorSaveData()
+        {
+            Owner = Owner.UID.ToString(),
+            ConnectedID = ((ConnectedObject?.Owner?.UID) ?? Guid.Empty).ToString(),
+            side = (int)GetSide()
+        };
+    }
 }

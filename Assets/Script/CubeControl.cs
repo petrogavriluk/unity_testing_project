@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using Helpers;
+using Interfaces;
+using Serialization;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using Helpers;
-using Interfaces;
 
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(BoxCollider))]
@@ -14,6 +12,10 @@ using Interfaces;
 public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRenderer, IAttachable
 {
     private static readonly float doubleClickDelay = 0.4f;
+    public static Vector3 CubeShift = new Vector3(0f, 0f, 0f);
+    public static Vector3 CylinderShift = new Vector3(0f, 0.5f, 0f);
+    public static Vector3 CapsuleShift = new Vector3(0f, 0.5f, 0f);
+    public static Vector3 SphereShift = new Vector3(0f, 0f, 0f);
 
     public Color defaultColor;
     public Color hoverColor;
@@ -26,17 +28,13 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     public float amplitude;
     public float rescalePerSec;
 
-    public Vector3 CubePosition;
-    public Vector3 CylinderPosition;
-    public Vector3 CapsulePosition;
-    public Vector3 SpherePosition;
+
+    public Vector3 currentShift;
 
     private bool isSelected = false;
     private bool isHovered = false;
     private bool isConnectorActive = false;
 
-    [SerializeField]
-    private Vector3 startPosition;
     [SerializeField]
     private AnimationCurve MovementCurve;
     [SerializeField]
@@ -50,6 +48,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     private bool isMoving = false;
     private float lastClick = 0f;
     private bool showConnectors = false;
+    private PrimitiveType currentMeshType = PrimitiveType.Cube;
     private readonly Dictionary<Side, IConnector> sideConnectors = new Dictionary<Side, IConnector>();
 
     private Color MaterialColor
@@ -117,6 +116,42 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         get { return sideConnectors; }
     }
 
+    public Guid UID
+    {
+        get;
+        private set;
+    } = Guid.NewGuid();
+
+    private bool IsSelected
+    {
+        get { return isSelected; }
+        set
+        {
+            isSelected = value;
+            UpdateState();
+        }
+    }
+
+    private bool IsHovered
+    {
+        get { return isHovered; }
+        set
+        {
+            isHovered = value;
+            UpdateState();
+        }
+    }
+
+    private bool IsConnectorActive
+    {
+        get { return isConnectorActive; }
+        set
+        {
+            isConnectorActive = value;
+            UpdateState();
+        }
+    }
+
     private void Awake()
     {
         stateText = Controllers.CreatorInstance.CreateTextMesh();
@@ -126,7 +161,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         lineRenderer = GetComponent<LineRenderer>();
         ShowLineRender(false);
 
-        transform.position = startPosition = CubePosition;
+        currentShift = CubeShift;
         SetMeshDirectly(PrimitiveType.Cube);
 
         CreateConnectors();
@@ -211,50 +246,34 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         sideConnectors[side] = connector;
     }
 
-    void OnRightMouseDown(Vector3 point)
-    {
-        Controllers.ContextMenuControllerInstance.ShowContextMenu(this, point, animator);
-    }
+    private void OnRightMouseDown(Vector3 point) => Controllers.ContextMenuControllerInstance.ShowContextMenu(this, point, animator);
 
-    void OnDoubleClick()
+    private void OnDoubleClick()
     {
         if (Controllers.MoveHelperInstance.IsMoving)
             return;
 
-        Controllers.MoveHelperInstance.StartMoving( this);
+        Controllers.MoveHelperInstance.StartMoving(this);
     }
 
-    private void OnMouseDown()
-    {
-        isSelected = !isSelected;
-        UpdateState();
+    private void OnMouseDown() => IsSelected = !IsSelected;
+    private void OnMouseEnter() => IsHovered = true;
 
-    }
-    private void OnMouseEnter()
-    {
-        isHovered = true;
-        UpdateState();
-    }
-
-    private void OnMouseExit()
-    {
-        isHovered = false;
-        UpdateState();
-    }
+    private void OnMouseExit() => IsHovered = false;
 
     private void UpdateState()
     {
-        if (isConnectorActive)
+        if (IsConnectorActive)
         {
             stateText.text = "Connect?";
             MaterialColor = potentialConnectionColor;
         }
-        else if (isSelected)
+        else if (IsSelected)
         {
             stateText.text = "Selected";
             MaterialColor = selectedColor;
         }
-        else if (isHovered)
+        else if (IsHovered)
         {
             stateText.text = "Hovered";
             MaterialColor = hoverColor;
@@ -264,6 +283,8 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
             stateText.text = "Normal";
             MaterialColor = defaultColor;
         }
+        // For Debug
+        // stateText.text = UID.ToString().Substring(0, 5);
     }
 
     void UpdateConnectors(object sender = null, EventArgs e = null)
@@ -298,7 +319,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
 
     private void SetMesh(object sender, PrimitiveType type)
     {
-        if (!isSelected)
+        if (!IsSelected)
             return;
         SetMeshDirectly(type);
     }
@@ -309,26 +330,27 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         {
             case PrimitiveType.Sphere:
                 meshFilter.mesh = Primitives.sphereMesh;
-                transform.position += SpherePosition - startPosition;
-                startPosition = SpherePosition;
+                transform.position += SphereShift- currentShift;
+                currentShift = SphereShift;
                 break;
             case PrimitiveType.Capsule:
                 meshFilter.mesh = Primitives.capsuleMesh;
-                transform.position += CapsulePosition - startPosition;
-                startPosition = CapsulePosition;
+                transform.position += CapsuleShift - currentShift;
+                currentShift = CapsuleShift;
                 break;
             case PrimitiveType.Cylinder:
                 meshFilter.mesh = Primitives.cylinderMesh;
-                transform.position += CylinderPosition - startPosition;
-                startPosition = CylinderPosition;
+                transform.position += CylinderShift - currentShift;
+                currentShift = CylinderShift;
                 break;
             default:
                 meshFilter.mesh = Primitives.cubeMesh;
-                transform.position += CubePosition - startPosition;
-                startPosition = CubePosition;
+                transform.position += CubeShift - currentShift;
+                currentShift = CubeShift;
                 break;
         }
-        if(oldBounds!=ObjectRenderer.bounds)
+        currentMeshType = type;
+        if (oldBounds!=ObjectRenderer.bounds)
         {
             DetachAll();
         }
@@ -339,7 +361,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
 
     void SetRotation(object sender, bool enable)
     {
-        if (!isSelected || isMoving)
+        if (!IsSelected || isMoving)
             return;
 
         animator.SetRotateAnimationState(enable);
@@ -348,7 +370,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     }
     void SetMove(object sender, bool enable)
     {
-        if (!isSelected || isMoving)
+        if (!IsSelected || isMoving)
             return;
 
         animator.SetMoveAnimationState(enable);
@@ -357,7 +379,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
     }
     void SetScale(object sender, bool enable)
     {
-        if (!isSelected || isMoving)
+        if (!IsSelected || isMoving)
             return;
 
         animator.SetScaleAnimationState(enable);
@@ -381,25 +403,16 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         animator.ObjectScaled -= UpdateConnectors;
     }
 
-    public void CopyFrom(object anotherObject)
-    {
-        var another = anotherObject as CubeControl;
-        if (another == null)
-            throw new ArgumentException("Wrong object to copy from");
-
-        //stateText = Instantiate<TextMesh>(another.stateText);
-    }
-
     public void OnConnectorHoverStart(IConnector onConnector)
     {
-        isConnectorActive = true;
+        IsConnectorActive = true;
         UpdateState();
         onConnector.Hovered = true;
     }
 
     public void OnConnectorHoverEnd(IConnector onConnector)
     {
-        isConnectorActive = false;
+        IsConnectorActive = false;
         UpdateState();
         onConnector.Hovered = false;
     }
@@ -410,5 +423,60 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         {
             connector.Disconnect();
         }
+    }
+
+    public CubeSaveData SaveState()
+    {
+        return new CubeSaveData
+        {
+            ID = UID.ToString(),
+            primitiveType = (int)currentMeshType,
+            showConnectors = ShowConnectors,
+            isSelected = IsSelected,
+            isHovered = IsHovered,
+            rotation = transform.rotation,
+            position = transform.position,
+            scale = transform.localScale,
+        };
+    }
+
+    public void RestoreFromState(CubeSaveData state)
+    {
+        UID = Guid.Parse(state.ID);
+        SetMeshDirectly((PrimitiveType)state.primitiveType);
+        ShowConnectors = state.showConnectors;
+        IsSelected = state.isSelected;
+        IsHovered = state.isHovered;
+        transform.position = state.position;
+        transform.rotation = state.rotation;
+        transform.localScale = state.scale;
+        OnCameraMoved();
+    }
+
+    public void ResetDefault(Transform defaultTransform)
+    {
+        animator.SetMoveAnimationState(false);
+        animator.SetRotateAnimationState(false);
+        animator.SetScaleAnimationState(false);
+
+        transform.position = defaultTransform.position;
+        transform.rotation = defaultTransform.localRotation;
+        transform.localScale = defaultTransform.localScale;
+
+        DetachAll();
+        ShowConnectors = false;
+        IsMoving = false;
+        IsSelected = false;
+        IsHovered = false;
+        OnCameraMoved();
+    }
+
+    public MonoBehaviour CreateCopy()
+    {
+        var copied = Controllers.CreatorInstance.GetCubeObject(currentMeshType);
+        CubeSaveData saveData = SaveState();
+        copied.RestoreFromState(saveData);
+        copied.UID = Guid.NewGuid();
+        return copied;
     }
 }
