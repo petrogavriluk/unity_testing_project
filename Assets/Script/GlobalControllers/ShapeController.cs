@@ -19,15 +19,7 @@ public class ShapeController : MonoBehaviour
 
     public Toggle MoveAsGroup;
 
-    [SerializeField]
-    private GameObject cubePrefab;
-
     public event EventHandler<PrimitiveType> ChangeShape;
-
-    public GameObject CubePrefab
-    {
-        get { return cubePrefab; }
-    }
 
     // Use this for initialization
     void Start()

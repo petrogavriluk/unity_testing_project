@@ -13,12 +13,17 @@ namespace Serialization
 
     public class StateSaver : MonoBehaviour
     {
+        const int savesNumber = 3;
         [Serializable]
         private class State
         {
             public List<CubeSaveData> cubesData = new List<CubeSaveData>();
             public List<ConnectorSaveData> pointsData = new List<ConnectorSaveData>();
+            public CameraSaveData cameraData = new CameraSaveData();
         }
+
+        private readonly int spriteHeight = 200;
+        private readonly int spriteWidth = 300;
 
         [SerializeField]
         Button saveButton;
@@ -30,13 +35,66 @@ namespace Serialization
         Dropdown loadDropdown;
         [SerializeField]
         private GameObject cubeCollectionParent;
+        [SerializeField]
+        private Sprite emptyStateSprite;
+        [SerializeField]
+        private Camera renderingCamera;
+        private readonly Sprite[] saveImages = new Sprite[savesNumber];
+        private readonly bool[] hasSave = new bool[savesNumber];
 
-        private readonly string fileName = "/SavedState{0}.json";
+        private string fileName => Application.persistentDataPath + "/SavedState{0}.json";
+        private string imgName => Application.persistentDataPath + "/SavedState{0}.dat";
+
 
         private void Awake()
         {
-            saveButton.onClick.AddListener(() => SaveState(saveDropdown.value + 1));
-            loadButton.onClick.AddListener(() => LoadState(loadDropdown.value + 1));
+            saveButton.onClick.AddListener(() => SaveState(saveDropdown.value));
+            loadButton.onClick.AddListener(() => LoadState(loadDropdown.value));
+            loadDropdown.onValueChanged.AddListener((v) => LoadDropdownChanged(v));
+            renderingCamera.enabled = false;
+            InitDropdowns();
+        }
+
+        private void InitDropdowns()
+        {
+            saveDropdown.ClearOptions();
+            loadDropdown.ClearOptions();
+            List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
+            for (int i = 0; i < savesNumber; i++)
+            {
+                hasSave[i] = false;
+                Sprite sprite = null;
+                if (File.Exists(String.Format(imgName, i)) && File.Exists(String.Format(fileName, i)))
+                {
+                    sprite = LoadSprite(String.Format(imgName, i));
+                    if (sprite != null)
+                    {
+                        hasSave[i] = true;
+                    }
+                }
+                saveImages[i] = sprite ?? emptyStateSprite;
+                options.Add(new Dropdown.OptionData((i + 1).ToString(), saveImages[i]));
+            }
+            saveDropdown.AddOptions(options);
+            loadDropdown.AddOptions(options);
+            saveDropdown.RefreshShownValue();
+            loadDropdown.RefreshShownValue();
+            loadButton.interactable = hasSave[0];
+        }
+
+        private void LoadDropdownChanged(int v)
+        {
+            loadButton.interactable = hasSave[v];
+        }
+
+        private Sprite LoadSprite(string path)
+        {
+            byte[] data = File.ReadAllBytes(path);
+            Texture2D texture = new Texture2D(spriteWidth, spriteHeight);
+            texture.LoadRawTextureData(data);
+            Rect rect = new Rect(0, 0, spriteWidth, spriteHeight);
+            Sprite sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+            return sprite;
         }
 
         public void SaveState(int saveNumber)
@@ -56,14 +114,24 @@ namespace Serialization
                         state.pointsData.Add(point.SaveState());
                 }
             }
+            state.cameraData.position = Camera.main.transform.position;
+            state.cameraData.rotation = Camera.main.transform.rotation;
 
             string json = JsonUtility.ToJson(state);
-            File.WriteAllText(Application.persistentDataPath + String.Format(fileName, saveNumber), json);
+            File.WriteAllText(String.Format(fileName, saveNumber), json);
+
+            CreateScreenShot(saveNumber);
+            saveDropdown.options[saveNumber].image = saveImages[saveNumber];
+            loadDropdown.options[saveNumber].image = saveImages[saveNumber];
+            saveDropdown.RefreshShownValue();
+            loadDropdown.RefreshShownValue();
+            hasSave[saveNumber] = true;
+            loadButton.interactable = hasSave[loadDropdown.value];
         }
 
         public void LoadState(int saveNumber)
         {
-            string json = File.ReadAllText(Application.persistentDataPath + String.Format(fileName, saveNumber));
+            string json = File.ReadAllText(String.Format(fileName, saveNumber));
             State state = JsonUtility.FromJson<State>(json);
 
             foreach (Transform child in cubeCollectionParent.transform)
@@ -98,6 +166,30 @@ namespace Serialization
                 }
                 createdObjects[cube.ID] = cubeObject;
             }
+
+            Camera.main.transform.position = state.cameraData.position;
+            Camera.main.transform.rotation = state.cameraData.rotation;
+        }
+
+        private void CreateScreenShot(int saveNumber)
+        {
+            string path = String.Format(imgName, saveNumber);
+            RenderTexture texture = new RenderTexture(spriteWidth, spriteHeight,24);
+            renderingCamera.targetTexture = texture;
+            renderingCamera.Render();
+
+            var activeTexture = RenderTexture.active;
+            RenderTexture.active = texture;
+
+            Rect rect = new Rect(0, 0, spriteWidth, spriteHeight);
+            Texture2D image = new Texture2D(spriteWidth, spriteHeight);
+            image.ReadPixels(rect, 0, 0);
+            image.Apply();
+            Sprite sprite = Sprite.Create(image, rect, new Vector2(0.5f, 0.5f));
+            saveImages[saveNumber] = sprite;
+            File.WriteAllBytes(path, image.GetRawTextureData());
+
+            RenderTexture.active = activeTexture;
         }
     }
 }
