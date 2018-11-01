@@ -92,6 +92,7 @@ namespace Serialization
             byte[] data = File.ReadAllBytes(path);
             Texture2D texture = new Texture2D(spriteWidth, spriteHeight);
             texture.LoadRawTextureData(data);
+            texture.Apply();
             Rect rect = new Rect(0, 0, spriteWidth, spriteHeight);
             Sprite sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
             return sprite;
