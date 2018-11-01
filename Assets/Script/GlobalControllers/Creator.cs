@@ -77,9 +77,6 @@ public class Creator : MonoBehaviour
 
     public void DestroyCubeObject(CubeControl cube)
     {
-        if (cubePool.Contains(cube))
-            return;
-
         cube.ResetDefault(cubePrefab.transform);
         cube.gameObject.SetActive(false);
         cubePool.Enqueue(cube);

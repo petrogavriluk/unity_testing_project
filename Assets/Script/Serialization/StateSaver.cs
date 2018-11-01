@@ -138,7 +138,7 @@ namespace Serialization
             foreach (Transform child in cubeCollectionParent.transform)
             {
                 var cube = child.gameObject.GetComponent<CubeControl>();
-                if (!cube)
+                if (!cube || !cube.gameObject.activeSelf)
                     continue;
 
                 Controllers.CreatorInstance.DestroyCubeObject(cube);
