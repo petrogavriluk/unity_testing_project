@@ -1,13 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
+    [SerializeField]
+    Button openMenuButton;
     bool isShown = false;
     // Use this for initialization
     void Start()
     {
+        openMenuButton.onClick.AddListener(() => ChangeMenuState());
         UpdateMenuState();
     }
 

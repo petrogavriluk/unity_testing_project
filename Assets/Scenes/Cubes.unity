@@ -669,7 +669,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.5661765, g: 0.5661765, b: 0.5661765, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1971,7 +1971,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.5661765, g: 0.5661765, b: 0.5661765, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -2202,6 +2202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28a646d276599e249b66af321d209725, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  openMenuButton: {fileID: 918215243}
 --- !u!1 &918215241
 GameObject:
   m_ObjectHideFlags: 0
@@ -2276,18 +2277,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 918215244}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 800280242}
-        m_MethodName: ChangeMenuState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &918215244
@@ -3006,6 +2996,11 @@ Prefab:
       value: 
       objectReference: {fileID: 21300000, guid: 4cb6ba35aec7f6b46ac9b1d1cd1fb092,
         type: 3}
+    - target: {fileID: 114471566090881970, guid: d606d41d6941fdd47aaa23bbde14951b,
+        type: 2}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d606d41d6941fdd47aaa23bbde14951b, type: 2}
   m_IsPrefabParent: 0
@@ -4773,6 +4768,11 @@ Prefab:
       value: 
       objectReference: {fileID: 21300000, guid: 4cb6ba35aec7f6b46ac9b1d1cd1fb092,
         type: 3}
+    - target: {fileID: 114471566090881970, guid: d606d41d6941fdd47aaa23bbde14951b,
+        type: 2}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d606d41d6941fdd47aaa23bbde14951b, type: 2}
   m_IsPrefabParent: 0
