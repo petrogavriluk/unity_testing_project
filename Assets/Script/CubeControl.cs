@@ -12,10 +12,8 @@ using UnityEngine;
 public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRenderer, IAttachable
 {
     private static readonly float doubleClickDelay = 0.4f;
-    public static Vector3 CubeShift = new Vector3(0f, 0f, 0f);
-    public static Vector3 CylinderShift = new Vector3(0f, 0.5f, 0f);
-    public static Vector3 CapsuleShift = new Vector3(0f, 0.5f, 0f);
-    public static Vector3 SphereShift = new Vector3(0f, 0f, 0f);
+    [SerializeField]
+    AnimationData animationData;
 
     public Color defaultColor;
     public Color hoverColor;
@@ -24,27 +22,16 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
 
     private TextMesh stateText;
 
-    public float bouncePerSec;
-    public float amplitude;
-    public float rescalePerSec;
-
-
-    public Vector3 currentShift;
+    private Vector3 currentShift;
 
     private bool isSelected = false;
     private bool isHovered = false;
     private bool isConnectorActive = false;
-
-    [SerializeField]
-    private AnimationCurve MovementCurve;
-    [SerializeField]
-    private AnimationCurve ScaleCurve;
-
-    TransformAnimator animator;
-    Renderer objectRenderer;
-    BoxCollider boxCollider;
-    MeshFilter meshFilter;
-    LineRenderer lineRenderer;
+    private TransformAnimator animator;
+    private Renderer objectRenderer;
+    private BoxCollider boxCollider;
+    private MeshFilter meshFilter;
+    private LineRenderer lineRenderer;
     private bool isMoving = false;
     private float lastClick = 0f;
     private bool showConnectors = false;
@@ -161,7 +148,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         lineRenderer = GetComponent<LineRenderer>();
         ShowLineRender(false);
 
-        currentShift = CubeShift;
+        currentShift = FiguresPositions.Instance.CubeShift;
         SetMeshDirectly(PrimitiveType.Cube);
 
         CreateConnectors();
@@ -221,11 +208,7 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         animator.ObjectScaled += OnCameraMoved;
         animator.ObjectScaled += UpdateConnectors;
 
-        animator.BouncePerSec = bouncePerSec;
-        animator.Amplitude = amplitude;
-        animator.RescalePerSec = rescalePerSec;
-        animator.ScaleCurve = ScaleCurve;
-        animator.MovementCurve = MovementCurve;
+        animator.AnimationParameters = animationData;
     }
 
     private void CreateConnectors()
@@ -330,23 +313,23 @@ public class CubeControl : MonoBehaviour, IMovable, ICopyable, IObjectWithRender
         {
             case PrimitiveType.Sphere:
                 meshFilter.mesh = Primitives.sphereMesh;
-                transform.position += SphereShift- currentShift;
-                currentShift = SphereShift;
+                transform.position += FiguresPositions.Instance.SphereShift - currentShift;
+                currentShift = FiguresPositions.Instance.SphereShift;
                 break;
             case PrimitiveType.Capsule:
                 meshFilter.mesh = Primitives.capsuleMesh;
-                transform.position += CapsuleShift - currentShift;
-                currentShift = CapsuleShift;
+                transform.position += FiguresPositions.Instance.CapsuleShift - currentShift;
+                currentShift = FiguresPositions.Instance.CapsuleShift;
                 break;
             case PrimitiveType.Cylinder:
                 meshFilter.mesh = Primitives.cylinderMesh;
-                transform.position += CylinderShift - currentShift;
-                currentShift = CylinderShift;
+                transform.position += FiguresPositions.Instance.CylinderShift - currentShift;
+                currentShift = FiguresPositions.Instance.CylinderShift;
                 break;
             default:
                 meshFilter.mesh = Primitives.cubeMesh;
-                transform.position += CubeShift - currentShift;
-                currentShift = CubeShift;
+                transform.position += FiguresPositions.Instance.CubeShift - currentShift;
+                currentShift = FiguresPositions.Instance.CubeShift;
                 break;
         }
         currentMeshType = type;

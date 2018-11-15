@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c52a2d3e330acb4c897f85e12826ffe, type: 3}
+  m_Name: StandartAnimationData
+  m_EditorClassIdentifier: 
+  bouncePerSec: 0.3
+  amplitude: 3
+  rescalePerSec: 0.5
+  MovementCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.0022735596
+      value: 0
+      inSlope: 0.05188715
+      outSlope: 0.05188715
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.5007967
+      value: 0.4040207
+      inSlope: 1.4443984
+      outSlope: 1.4443984
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0.07857206
+      outSlope: 0.07857206
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 0
+    m_RotationOrder: 0
+  ScaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.0022735596
+      value: 0
+      inSlope: 0.05188715
+      outSlope: 0.05188715
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.5007967
+      value: 0.4040207
+      inSlope: 1.4443984
+      outSlope: 1.4443984
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0.07857206
+      outSlope: 0.07857206
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 0
+    m_RotationOrder: 0

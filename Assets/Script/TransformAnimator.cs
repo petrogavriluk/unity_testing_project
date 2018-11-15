@@ -19,13 +19,7 @@ class TransformAnimator : ITransformAnimator
     float scaleAnimationTime = 0f;
     float moveAnimationTime = 0f;
 
-    public AnimationCurve MovementCurve { get; set; }
-    public AnimationCurve ScaleCurve { get; set; }
-    public float BouncePerSec { get; set; }
-
-    public float Amplitude { get; set; }
-
-    public float RescalePerSec { get; set; }
+    public AnimationData AnimationParameters { get; set; }
 
     public TransformAnimator(MonoBehaviour monoBehaviour)
     {
@@ -106,8 +100,8 @@ class TransformAnimator : ITransformAnimator
 
         while (true)
         {
-            animatedObject.transform.localScale = Vector3.Lerp(maxScale, minScale, ScaleCurve.Evaluate(scaleAnimationTime));
-            scaleAnimationTime += Time.deltaTime * RescalePerSec * 2;
+            animatedObject.transform.localScale = Vector3.Lerp(maxScale, minScale, AnimationParameters.ScaleCurve.Evaluate(scaleAnimationTime));
+            scaleAnimationTime += Time.deltaTime * AnimationParameters.rescalePerSec * 2;
 
             ObjectScaled?.Invoke(this, EventArgs.Empty);
             yield return null;
@@ -118,7 +112,7 @@ class TransformAnimator : ITransformAnimator
         while (true)
         {
             float shift = GetShiftCoefficient(moveAnimationTime + Time.deltaTime) - GetShiftCoefficient(moveAnimationTime);
-            animatedObject.transform.position += new Vector3(0f, shift * Amplitude, 0f);
+            animatedObject.transform.position += new Vector3(0f, shift * AnimationParameters.amplitude, 0f);
             moveAnimationTime += Time.deltaTime;
             ObjectMoved?.Invoke(this, EventArgs.Empty);
             yield return null;
@@ -126,7 +120,7 @@ class TransformAnimator : ITransformAnimator
     }
     float GetShiftCoefficient(float time)
     {
-        return MovementCurve.Evaluate(time * BouncePerSec * 2);
+        return AnimationParameters.MovementCurve.Evaluate(time * AnimationParameters.bouncePerSec * 2);
         //return -Mathf.Cos((time) * bouncePerSec * (2 * Mathf.PI));
     }
 }
